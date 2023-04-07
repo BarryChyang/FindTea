@@ -3,7 +3,7 @@
 require_once("dbconn.php");
 
 $conn=create_connect();     //dbtools.php
-$sql="Select * from Member order by ID asc";
+$sql="Select * from member order by ID asc";
 
 //$rs1=mysqli_query($conn,$sql);
 $rs=execute_sql($conn,"myShop",$sql);       //dbconn.php

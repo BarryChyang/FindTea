@@ -25,7 +25,7 @@ if (isset($Jsondata["Username"]) && isset($Jsondata["Pwd"]) && isset($Jsondata["
 
         $conn=create_connect();     //dbtools.php
 
-        $sql="INSERT INTO Member (Username,Pwd,Sex,Tel,Address,Usertype,Photo,LineID,Bonuspoint) Values ('$pUsername', '$pPwd', '$pSex', '$pTel', '$pAddress', '$pUsertype', '$pPhoto', '$pLineID', '$pBonuspoint')";
+        $sql="INSERT INTO member (Username,Pwd,Sex,Tel,Address,Usertype,Photo,LineID,Bonuspoint) Values ('$pUsername', '$pPwd', '$pSex', '$pTel', '$pAddress', '$pUsertype', '$pPhoto', '$pLineID', '$pBonuspoint')";
 
         $result=execute_sql($conn,"myShop",$sql);       //dbconn.php
         if ($result){

@@ -26,7 +26,7 @@ if (isset($Jsondata["Orderno"]) && isset($Jsondata["Product_ID"]) && isset($Json
 
         $conn=create_connect();     //dbtools.php
 
-        $sql="INSERT INTO OrderSub (Orderno,Product_ID,Pname,Price,Pnum,Points,SweetID,TempID,CapacityID,Account) Values ('$pOrderno','$pProduct_ID','$pPname','$pPrice','$pPnum','$pPoints','$pSweetID','$pTempID','$pCapacityID','$pAccount')";
+        $sql="INSERT INTO ordersub (Orderno,Product_ID,Pname,Price,Pnum,Points,SweetID,TempID,CapacityID,Account) Values ('$pOrderno','$pProduct_ID','$pPname','$pPrice','$pPnum','$pPoints','$pSweetID','$pTempID','$pCapacityID','$pAccount')";
 
         $result=execute_sql($conn,"myShop",$sql);       //dbconn.php
         if ($result){

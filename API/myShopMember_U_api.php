@@ -27,7 +27,7 @@ if (isset($Jsondata["ID"]) && isset($Jsondata["Username"]) && isset($Jsondata["P
         $pLineID = $Jsondata["LineID"];
         $pBonuspoint = $Jsondata["Bonuspoint"];
       
-        $sql="Update Member set Username='".$pUsername."',Pwd='".$Pwd."',Sex='".$pSex."',Tel='".$pTel."',Address='".$pAddress."',Usertype='".$pUsertype."',Photo='".$pPhoto."',LineID='".$pLineID."',Bonuspoint='".$pBonuspoint."' where ID=" . $pID ;
+        $sql="Update member set Username='".$pUsername."',Pwd='".$Pwd."',Sex='".$pSex."',Tel='".$pTel."',Address='".$pAddress."',Usertype='".$pUsertype."',Photo='".$pPhoto."',LineID='".$pLineID."',Bonuspoint='".$pBonuspoint."' where ID=" . $pID ;
       
         if (execute_sql($conn,"myShop",$sql)){    //dbconn.php
             if (mysqli_affected_rows($conn)>0 ){

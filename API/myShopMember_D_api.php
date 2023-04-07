@@ -12,7 +12,7 @@ if (isset($Jsondata["ID"])){    //檢查所有欄位是否有傳遞到位
         $pID = $Jsondata["ID"];
 
         $conn=create_connect();     //dbtools.php
-        $sql="Delete from Member where ID='$pID'";                
+        $sql="Delete from member where ID='$pID'";                
         
         if(execute_sql($conn,"myShop",$sql)) {
             if (mysqli_affected_rows($conn)>0){    //判斷select 是否有資料 或是 有正確讀取    

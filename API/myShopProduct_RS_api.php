@@ -14,7 +14,7 @@ if (isset($Jsondata["id"])){
       $pSearch = $Jsondata["id"];
 
       $conn=create_connect();     //dbtools.php
-      $sql="Select * from Product Where ID like '%".$pSearch."%' or Pname like '%".$pSearch."%' order by ID asc";
+      $sql="Select * from product Where ID like '%".$pSearch."%' or Pname like '%".$pSearch."%' order by ID asc";
 
       $rs=execute_sql($conn,"myShop",$sql);       //dbconn.php
       //$rs=execute_sql($conn,"myShop",$sql);       //dbconn.php

@@ -13,7 +13,7 @@ if (isset($Jsondata["ID"])){    //檢查所有欄位是否有傳遞到位
         $pID = $Jsondata["ID"];
 
         $conn=create_connect();     //dbtools.php
-        $sql="Select * from OrderSub where ID='$pID'";        
+        $sql="Select * from ordersub where ID='$pID'";        
         $rs=execute_sql($conn,"myShop",$sql);       //dbconn.php
 
         if (mysqli_num_rows($rs) >0){    //判斷select 是否有資料 或是 有正確讀取    

@@ -24,7 +24,7 @@ if (isset($Jsondata["Sort_ID"]) && isset($Jsondata["Pname"]) && isset($Jsondata[
 
         $conn=create_connect();     //dbtools.php
 
-        $sql="INSERT INTO Product (Sort_ID,Pname,Pdimg,Information,Price,DisPrice,Points) Values ('$pSort_ID','$pPname','$pPdimg','$pInformation','$pPrice','$pDisPrice','$pPoints')";
+        $sql="INSERT INTO product (Sort_ID,Pname,Pdimg,Information,Price,DisPrice,Points) Values ('$pSort_ID','$pPname','$pPdimg','$pInformation','$pPrice','$pDisPrice','$pPoints')";
 
         $result=execute_sql($conn,"myShop",$sql);       //dbconn.php
         if ($result){
