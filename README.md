@@ -37,7 +37,7 @@
 <li>
 <h2>後臺系統管理員</h2>
 <h3>帳號:demomap 密碼:123456</h3>
-<img src="images/mem0.jpg" alt="">
+<img src="/images/mem0.jpg" alt="">
 <ul>
 <li>
 <h3>分析商品銷售量</h3>
@@ -60,7 +60,7 @@
 <ul>
 <li>
 <h2>登入會員</h2>
-<img src="images/mem1.jpg" alt="">
+<img src="/images/mem1.jpg" alt="">
 <ul>
 <li>
 <h3>會員基本資料</h3>
