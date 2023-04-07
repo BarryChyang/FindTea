@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/myall.css">
+
+    <style>
+        /* 顏色說明 */
+
+
+
+        :root {
+            --line-border-fill: #f33252;
+            /*填滿狀態*/
+            --line-border-empty: #f4b9b9c6;
+            /*未填滿狀態*/
+            --btn-hover: #ec5b73;
+        }
+
+        body {
+            background-color: #fff5f6;
+            margin: 0;
+            padding: 0;
+            /* display: flex; */
+            /*讓內容在viewport的中間*/
+            justify-content: center;
+            align-items: center;
+            /* height: 100vh; */
+            /* overflow: hidden; */
+        }
+
+        /* 主容器 */
+        .container {
+            text-align: center;
+            /* font-size: 20px; */
+            /* font-weight: bold; */
+        }
+
+        /* 進度條容器 */
+        .progress-container {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            /*可以針對progress-containe內部物件的位子去做調整*/
+            margin-bottom: 30px;
+            max-width: 100%;
+            width: 350px;
+        }
+
+        /* 預設進度「線條」 */
+        .progress-container::before {
+            content: "";
+            background-color: var(--line-border-empty);
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            z-index: -1;
+            transform: translateY(-50%);
+            /*線條往上移動*/
+        }
+
+        /* 實際進度「線條」 */
+        div.progress {
+            background-color: var(--line-border-fill);
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 0%;
+            /*一開始不會有進度，所以設0%*/
+            height: 3px;
+            z-index: -1;
+            transform: translateY(-50%);
+            /*線條往上移動*/
+            transition: width 0.5s linear;
+        }
+
+        /* 步驟1、2、3、4 */
+        div.circle {
+            color: white;
+            background-color: #f34764;
+            border: 3px solid var(--line-border-empty);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            /* 讓數字置中對齊 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: border 0.5s linear;
+        }
+
+        /* 正在進行的步驟 */
+        div.circle.active {
+            border: 3px solid var(--line-border-fill);
+        }
+
+        .btn {
+            color: white;
+            background-color: var(--line-border-fill);
+            border: 0;
+            border-radius: 10px;
+            cursor: pointer;
+            padding: 8px 30px;
+            font-size: 14px;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            background-color: var(--btn-hover);
+        }
+
+        .btn:focus {
+            outline: 0;
+            /*或none*/
+        }
+
+        .btn:disabled {
+            cursor: not-allow;
+            background-color: var(--line-border-empty);
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg bg-light ">
+        <div class="container">
+            <a class="navbar-brand" href="#">訂購</a>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">購物車</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">訂單</a>
+                    </li>
+                    <li><a class="dropdown-item text-danger fw-700" id="link_control" href="MaskMap_HW_.html"
+                            style="display: none;">MAP</a></li>
+
+                </ul>
+                <div class="mx-auto fs-1">線上訂購</div>
+                <span class="text-danger fw-900 fs-3 me-2" id="login_member"></span>
+                <a href="Member.login.html" class="btn ms-auto" id="login_btn">登入</a>
+                <a href="Member.reg.html" class="btn" id="reg_btn">註冊</a>
+                <button class="btn" id="logout_btn" style="display: none;">登出</button>
+
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="row ">
+            <div class="col-12 d-flex justify-content-center ">
+                <div class="progress-container ">
+                    <!-- 進度「線條」 -->
+                    <div id="progress" class="progress "></div>
+                    <div class="circle active">1</div>
+                    <div class="circle">2</div>
+                    <div class="circle">3</div>
+                    <!-- <div class="circle">4</div> -->
+                </div>
+            </div>
+        </div>
+        <div class="" id="page1">
+            <div class="m-2">確認明細</div>
+            <div class="d-flex justify-content-center ">
+                <!-- 地址 -->
+                <div class="box03 w-50 col-12">
+                    <div class="row">
+                        <div class="col d-flex flex-column text-start">
+                            <div class="form-check float-start">
+                                <input type="radio" id="radio_adress01" name="radio_adress" class="form-check-label"
+                                    value="自取" checked>
+                                <label for="radio_adress01" id="Take_my" class="form-check-label">自取</label>
+                            </div>
+                            <!-- 自取 id:="spu" -->
+                            <div class="" id="spu" style="display: none;">
+                                <input type="text" class="form-control mb-3  d-flex align-self-center " id="adress01"
+                                    disabled placeholder="台中市西屯區工業區一路100號" value="台中市西屯區工業區一路100號">
+                            </div>
+
+                            <div class="form-check float-start">
+                                <input type="radio" id="radio_adress02" name="radio_adress" class="form-check-label"
+                                    value="外送">
+                                <label for="radio_adress02" class="form-check-label">外送</label>
+                            </div>
+                            <!-- 外送 id:="del" -->
+                            <div class="" id="del" style="display:none;">
+                                <input type="text" id="adress" class="form-control mb-3  d-flex align-self-center "
+                                    placeholder="請輸入地址">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center mt-4">
+                <!-- 購買內容 -->
+                <div class="box03 w-50 col-12" id="">
+                    <div class="row">
+                        <div class="col d-flex flex-column text-start">
+                            <div class="">購物內容</div>
+                            <div class=" d-flex flex-row justify-content-between mt-2">
+                                <div class="" id="buyname">購買人資料: </div>
+                                <div class="" id="totalmoney">$總金額/總數量</div>
+                            </div>
+                            <div class="" id="alldrink">
+                                <div class="box03 mt-3">
+                                    <div class="">珍珠伯爵紅茶拿鐵</div>
+                                    <div class="small">L/微冰/微糖/$40/1杯</div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="d-flex justify-content-center mt-4">
+                紅利折扣
+                <div class="box03 w-50 col-12">
+                    <div class="row">
+                        <div class="col d-flex flex-column text-start">
+                            <div class="">會員紅利折抵</div>
+                            <div class="mt-2 ">
+                                <div class="d-flex flex-row justify-content-between">
+                                    <div class="">
+                                        <input type="radio" id="radio_food02" name="radio_food" class="form-check-label"
+                                            value="紅利點數">
+                                        <label for="radio_food02" class="form-check-label">紅利點數</label>
+                                    </div>
+
+                                    <div class="">紅利餘額:XX</div>
+                                </div>
+
+                                <input type="radio" disabled id="radio_food02" name="radio_food"
+                                    class="form-check-label" value="折扣券">
+                                <label for="radio_food02" class="form-check-label">折扣券</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+            <div class="d-flex justify-content-center mt-4">
+                <!-- 訂單總量 -->
+                <div class="box03 w-50 col-12">
+                    <div class="row">
+                        <div class="col d-flex flex-column text-start">
+                            <div class="">訂單總量</div>
+                            <div class=" d-flex flex-row justify-content-between mt-2">
+                                <div class="" id="butdrink"></div>
+                                <div class="" id="buymoney"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="" id="page2" style="display: none;">
+            <div class="m-2">選擇付款</div>
+
+            <div class="d-flex justify-content-center mt-4">
+                <!-- 取餐人資料 -->
+                <div class="box03 w-50 col-12">
+                    <div class="row text-start">
+                        <div class="">取餐人資料</div>
+                        <div class="">姓名</div>
+                        <div class="">
+                            <input type="text" class="form-control mb-3  d-flex align-self-center " id="Take_name"
+                                placeholder="取餐人姓名">
+                        </div>
+                        <div class="">電話</div>
+                        <div class="">
+                            <input type="text" class="form-control mb-3  d-flex align-self-center " id="Take_phone"
+                                placeholder="取餐人電話">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center mt-4">
+                <!-- 付款方式 -->
+                <div class="box03 w-50 col-12">
+                    <div class="row text-start">
+                        <div class="">付款方式</div>
+                        <div class="form-check float-start">
+                            <input type="radio" id="radio_food02" name="radio_food" class="form-check-label" value="現金">
+                            <label for="radio_food02" class="form-check-label">現金</label>
+                        </div>
+                        <div class="form-check float-start">
+                            <input type="radio" id="radio_food02" name="radio_food" class="form-check-label" value="刷卡">
+                            <label for="radio_food02" class="form-check-label">刷卡</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="" id="page3" style="display: none;">
+            <div class="m-2">確認結帳</div>
+            <div class="d-flex justify-content-center mt-4">
+                <!-- 確認結帳資料 -->
+                <div class="box03 w-50 col-12">
+                    <div class="row text-start">
+                        <table class="" RULES=COLS style=" border:1px #cccccc solid;" cellpadding="10">
+                            <thead>取餐人資料</thead>
+
+                            <tbody id="show_menu">
+
+                                <tr>
+                                    <td>取餐人</td>
+                                    <td>XXX</td>
+                                </tr>
+                                <tr>
+                                    <td>連絡電話</td>
+                                    <td>0900-123-456</td>
+                                </tr>
+                                <tr>
+                                    <td>取餐方式</td>
+                                    <td>自取</td>
+                                </tr>
+                                <tr>
+                                    <td>付款方式</td>
+                                    <td>現金</td>
+                                </tr>
+                                <tr>
+                                    <td>應付金額</td>
+                                    <td>$187</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 上一步 -->
+        <button id="prev" type="button" class="btn mt-3" disabled>上一步</button>
+        <!-- 下一步 -->
+        <button id="next" type="button" class="btn mt-3">下一步</button>
+        <button id="get" type="button" class="btn mt-3" style="display: none;">送出</button>
+
+    </div>
+
+
+
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/jquery-3.6.1.min.js"></script>
+    <script src="js/check_member_state.js"></script>
+    <script>
+
+        let progress = document.getElementById("progress");
+        let prev = document.getElementById("prev");
+        let next = document.getElementById("next");
+        let circles = document.querySelectorAll(".circle");
+
+        let currentStep = 1; //目前步驟
+        var test;
+        var test02 = '自取';
+        var id;
+        var fd = '現金';
+        var totalprice = 0;
+        var Orderno;
+
+        // var check01 = [];
+        $(function () {
+            //利用cookie判斷登入狀態
+            if (getCookie("UID01") != "" && getCookie("UID02") != "" && getCookie("UID03") != "") {
+                console.log("UID存在");
+                //傳遞至後端驗證UID
+                var jsonData = {};
+                jsonData["uid01"] = getCookie("UID01");
+                jsonData["uid02"] = getCookie("UID02");
+                jsonData["uid03"] = getCookie("UID03");
+                console.log(JSON.stringify(jsonData));
+                $.ajax({
+                    type: "POST",
+                    url: "Member_UID_api.php",
+                    data: JSON.stringify(jsonData),
+                    dataType: "json",
+                    success: uid_check_showdata,
+                    error: function () {
+                        alert("error_Member_UID_api.php");
+                    }
+                })
+
+            }
+            //登出即時監聽
+            $("#logout_btn").bind("click", function () {
+                console.log("test");
+
+                setCookie("UID01", "", 7);
+                setCookie("UID02", "", 7);
+                setCookie("UID03", "", 7);
+
+                location.href = "progess.html";
+
+            })
+            //自取RADIO
+            $("#radio_adress01").click(function () {
+                console.log($(radio_adress01).val());
+                $("#spu").show();
+                $("#del").hide();
+                test = '台中市西屯區工業區一路100號';
+                test02 = $(radio_adress01).val();
+            })
+            //外送RADIO
+            $("#radio_adress02").click(function () {
+                console.log($(radio_adress02).val());
+                $("#del").show();
+                $("#spu").hide();
+                test = $("#adress").val();
+                test02 = $(radio_adress02).val();
+
+
+            })
+            //adress radio監聽
+            $("#adress").bind("input propertychange", function () {
+                console.log($("#adress").val());
+                test = $("#adress").val();
+            })
+
+            if (test == '台中市西屯區工業區一路100號') {
+                test = '台中市西屯區工業區一路100號';
+            } else if (test == $("#adress").val()) {
+                test = $("#adress").val();
+            }
+
+            $.ajax({
+                type: "GET",
+                url: "Member_Rapi.php",
+                dataType: "json",
+                async: false,
+                success: member_showdata,
+                error: function () {
+                    alert("error_Member_Rapi.php");
+                }
+            })
+
+            $.ajax({
+                type: "GET",
+                url: "OrderPrimary_R_api.php",
+                data: JSON.stringify(jsonData),
+                dataType: "json",
+                async: false,
+                success: OrderSub_showdata,
+                error: function () {
+                    alert("error_myShopOrderSub_R_byOrderno_api.php");
+                }
+            })
+        })
+        function OrderSub_showdata(data) {
+            console.log(data);
+            $("#alldrink").empty();
+            console.log(data.data[0].Orderno);
+            Orderno = data.data[0].Orderno;
+            var totalnum = 0;
+            if (data.state) {
+                for (var i = 0; i < data.data.length; i++) {
+                    var strHTML = '<div class="box03 mt-3"><div class="">' + data.data[i].Pname + '</div><div class="small">' + data.data[i].Capacity + '/' + data.data[i].Temp + '/' + data.data[i].Sweet + '/$' + data.data[i].Price + '/' + data.data[i].Pnum + '杯</div></div>'
+                    $("#alldrink").append(strHTML);
+                    totalprice = totalprice + data.data[i].Price * data.data[i].Pnum;
+
+                    totalnum = totalnum + data.data[i].Pnum * 1;
+                }
+                $("#totalmoney").text('$' + totalprice + '/' + totalnum + '杯');
+                $("#butdrink").append('總共:' + totalnum + '杯');
+                $("#buymoney").append('$' + totalprice);
+            } else {
+                alert(data.message);
+            }
+        }
+        //會員member_showdata
+        function member_showdata(data) {
+            console.log(data.data[0].Username);
+            $("#buyname").append(data.data[0].Username);
+        }
+        //確認UID
+        function uid_check_showdata(data) {
+            // console.log(data);
+            if (data.state) {
+
+                //顯示會員帳號相關訊息
+                $("#login_member").text(data.data[0].Username + "會員您好!");
+                //顯示會員登出鈕
+                $("#logout_btn").show();
+                //隱藏登入與註冊按鈕
+                $("#login_btn").hide();
+                $("#reg_btn").hide();
+                // //更換背景顏色
+                // $("#mybody").removeClass();
+                // $("#mybody").css("background-color", "red");
+                //顯示VIP功能 選單
+                $("#link_control").show();
+
+                if (data.data[0].Userstate == "y") {
+                    // location.href = "progess.html";
+                    // $("#link_control").show();
+                } else {
+                    alert("帳號已被停權!");
+                }
+            }
+
+        }
+
+        // 下一步
+        next.addEventListener("click", () => {
+            currentStep++;
+            // console.log(currentStep);
+            if (currentStep > circles.length) {
+                currentStep = circles.length;
+            }
+            // console.log(currentStep);
+            update();
+        });
+
+        // 上一步
+        prev.addEventListener("click", () => {
+            currentStep--;
+            // console.log(currentStep);
+            if (currentStep < 1) {
+                currentStep = 1;
+            }
+            // console.log(currentStep);
+            update();
+        });
+
+        // 更新DOM
+        function update() {
+            // 圓圈
+            circles.forEach((circleItem, index) => {
+                if (index < currentStep) {
+                    circleItem.classList.add("active");
+                } else {
+                    circleItem.classList.remove("active");
+                }
+            });
+
+            // 當前進度的線條
+            let actives = document.querySelectorAll(".active");
+            console.log((actives.length / circles.length) * 100);
+            // progress.style.width = (actives.length / circles.length) * 100 + "%";
+            progress.style.width =
+                ((actives.length - 2) / (circles.length - 1)) * 100 + "%";
+            if (currentStep === 1) {
+                $("#page1").show();
+                $("#page2").hide();
+                $("#page3").hide();
+                $("#next").show();
+                $("#get").hide();
+                prev.disabled = true;
+            } else if (currentStep === 3) {
+                $("#page1").hide();
+                $("#page2").hide();
+                $("#page3").show();
+                $("#next").hide();
+                $("#get").show();
+                $.each($("input[name='radio_food']:checked"), function () {
+                    fd = $(this).val();
+                })
+                $("#show_menu").empty();
+                var strHTML = `    <tr>
+                                        <td>取餐人</td>
+                                        <td>`+ $("#Take_name").val() + `</td>
+                                    </tr>
+                                    <tr>
+                                        <td>連絡電話</td>
+                                        <td>`+ $("#Take_phone").val() + `</td>
+                                    </tr>
+                                    <tr>
+                                        <td>取餐方式</td>
+                                        <td>`+ test02 + `</td>
+                                    </tr>
+                                    <tr>
+                                        <td>付款方式</td>
+                                        <td>`+ fd + `</td>
+                                    </tr>
+                                    <tr>
+                                        <td>應付金額</td>
+                                        <td>`+ totalprice + `</td>
+                                    </tr>`;
+                $("#show_menu").append(strHTML);
+                $("#get").bind("click", function () {
+
+
+                    if ($("#Take_name").val() != '' && $("#Take_phone").val() != '') {
+                        var jsondata = {};
+                        jsondata["Adress"] = test;
+                        // console.log(test02);
+                        jsondata["Take_mael"] = test02;
+                        jsondata["Name"] = $("#Take_name").val();
+                        jsondata["Phone"] = $("#Take_phone").val();
+                        jsondata["Pay"] = fd;
+                        jsondata["Money"] = totalprice;
+                        jsondata["Orderno"] = Orderno;
+                        console.log(JSON.stringify(jsondata));
+
+                        $.ajax({
+                            type: "POST",
+                            url: "Member_buyC_api.php",
+                            data: JSON.stringify(jsondata),
+                            dataType: "json",
+                            async: false,
+                            success: showdata_c,
+                            error: function () {
+                                alert("error_Member_buyC_api.php");
+                            }
+                        });
+                    } else {
+                        alert('請輸入姓名與電話');
+                    }
+                })
+                // next.disabled = true;
+
+            } else {
+                $("#page1").hide();
+                $("#page2").show();
+                $("#page3").hide();
+                $("#get").hide();
+                $("#next").show();
+                $("#next").text("下一步");
+
+
+                prev.disabled = false;
+                next.disabled = false;
+            }
+        }
+
+        function showdata_c(data) {
+            if (data.state) {
+                alert(data.message);
+            } else {
+                alert(data.message);
+            }
+        }
+    </script>
+</body>
+
+</html>

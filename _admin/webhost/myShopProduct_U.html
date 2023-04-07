@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>飲料產品檔 更新作業</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/mycss01.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-3">
+                <div class="card bg-secondary" style="--bs-bg-opacity: .1;">
+                    <div class="card-body">
+                        <form>
+                            <div class="mb-3">
+                                <label for="Sort_ID">產品類別</label>
+                                <select name="Sort_ID" id="Sort_ID" class="form-select form-select-sm mb-3">
+                                    <option selected></option>
+                                    <option value="11">手作特調</option>
+                                    <option value="12">絕對推薦</option>
+                                    <option value="13">愛茶的牛</option>
+                                    <option value="14">牧場鮮奶茶</option>
+                                    <option value="15">台灣鮮豆奶</option>
+                                </select>
+
+                                <!-- form-control 讓輸入框變漂亮 
+                                <input type="text" id="Sort_ID" class="form-control" placeholder="請輸入1~5碼字數為 產品類別">
+                                <div class="form-text" id="err_Sort_ID">請輸入1~5碼字數 !!</div>-->
+                            </div>
+                            <div class="mb-3">
+                                <label for="Pname">產品名稱</label>
+                                <!-- form-control 讓輸入框變漂亮 -->
+                                <input type="text" id="Pname" class="form-control" placeholder="請輸入2~10碼字數為 產品名稱">
+                                <div class="form-text" id="err_Pname">請輸入2~10碼 產品名稱 !!</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="Pdimg">產品圖片</label>
+                                <input type="file" id="Pdimg" class="form-control" placeholder="請輸入 1~ 80 數字為 產品圖片">
+                                <div class="form-text" id="err_Pdimg">請選擇上傳產品圖片(小於2M的檔案!) !!</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="Information">產品介紹</label>
+                                <input type="text" id="Information" class="form-control"
+                                    placeholder="請輸入 1~ 300 數字為 產品介紹">
+                                <div class="form-text" id="err_Information">請輸入產品介紹(允許HTML) !!</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="Price">產品單價</label>
+                                <input type="number" id="Price" class="form-control" placeholder="請輸入 1~ 500 數字為 單價金額">
+                                <div class="form-text" id="err_Price">請輸入單價金額 (NT$ 1~500) !!</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="DisPrice">產品特價</label>
+                                <input type="number" id="DisPrice" class="form-control"
+                                    placeholder="請輸入 0~ 500 數字為 特價金額">
+                                <div class="form-text" id="err_DisPrice">請輸入特價金額 (NT$ 0~500)!!</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="Points">贈送點數</label>
+                                <input type="number" id="Points" class="form-control" placeholder="請輸入0~100 數字為 贈送點數">
+                                <div class="form-text" id="err_Points">請輸入贈送點數 (0~100) !!</div>
+                            </div>
+                        </form>
+                        <div class="text-end" style="float:right">
+                            <button type="button" class="btn btn-outline-secondary" id="cancal_btn">取消</button>
+                            <button type="button" class="btn btn-outline-danger " id="updateOK_btn"
+                                disabled>確認更新</button>
+                            <!-- 預設更新 未異動前 OK button disable -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/bootstrap.bundle.min.js"></script>
+    <script src="../js/jquery-3.6.1.min.js"></script>
+
+    <script>
+        var chk_Sort_ID=true, chk_Pname=true, chk_Information=true, chk_Price=true, chk_DisPrice=true, chk_Points=true, chk_Pdimg=false
+        //$("#updateOK_btn").prop("disabled", true);  //預設更新 未異動前 OK button disable
+        //監聽 取消按鈕
+        $("#cancal_btn").bind("click", function () {
+            console.log("cancel_click");
+            location.href = "myShopProductCRUD.html";
+        });
+        //按鍵#OK-btn 監聽處理
+        $("#updateOK_btn").bind("click", function () {
+            //將傳遞給後端API的資料轉換成json    
+            var dataJson = {};    //宣告陣列物件
+            dataJson["ID"] = id;
+            dataJson["Sort_ID"] = $("#Sort_ID").val();
+            dataJson["Pname"] = $("#Pname").val();
+            dataJson["Pdimg"] = $("#Pdimg").val();
+            dataJson["Information"] = $("#Information").val();
+            dataJson["Price"] = $("#Price").val();
+            dataJson["DisPrice"] = $("#DisPrice").val();
+            dataJson["Points"] = $("#Points").val();
+            console.log(JSON.stringify(dataJson));
+
+            $.ajax({
+                type: "POST",
+                url: "../db/myShopProduct_U_api.php",
+                data: JSON.stringify(dataJson),
+                contentType: "appliction/json;chartest=usf-8",   //定義輸出語系,避免亂碼
+                dataType: "json",           //定義接收格式
+                success: showUpdatedata,
+                error: function () {
+                    console.log("error..... myShopProduct_U_api.php")
+                }
+            });
+        });
+
+        $(function () {
+            console.log(location.href);
+            console.log(location.href.split("="));
+            console.log(location.href.split("=")[1]);
+            if (typeof (location.href.split("=")[1]) != "undefined") {
+                console.log("網址路徑正確");
+                id = location.href.split("=")[1];
+                //處理帶入資料 .ajax 呼叫
+                //console.log("ID=>"+id);
+                var jsondata = {};
+                jsondata["ID"] = id;
+                $.ajax({
+                    type: "POST",
+                    url: "../db/myShopProduct_R_byID_api.php",
+                    data: JSON.stringify(jsondata),
+                    dataType: "json",
+                    success: showdata,
+                    error: function () {
+                        alert("error ->myShopProduct_R_byID_api.php");
+                    }
+                });
+            } else {
+                console.log("網址路徑錯誤");
+                location.herf = "myShopProductCRUD.html";
+            }
+
+            //#Sort_ID 即時監聽處理
+            $("#Sort_ID").bind("input propertychange", function () {
+                //console.log($("#Sort_ID").val().length);
+                if ($(this).val().length < 1 || $(this).val().length > 5) {
+                    $("#err_Sort_ID").html("產品類別字數不符規則 1~5 字");
+                    $("#err_Sort_ID").css("color", "red")
+                    chk_Sort_ID = false
+                } else {
+                    $("#err_Sort_ID").html("產品類別字數符合規則");
+                    $("#err_Sort_ID").css("color", "#253f58")
+                    chk_Sort_ID = true
+                }
+
+                console.log(chk_Sort_ID);
+                console.log(chk_Pname);
+                console.log(chk_Pdimg);
+                console.log(chk_Information);
+                console.log(chk_Price);
+                console.log(chk_DisPrice);
+                console.log(chk_Points);
+
+                if (chk_Sort_ID && chk_Pname && chk_Pdimg && chk_Information && chk_Price && chk_DisPrice && chk_Points) {
+                    /*     $("#updateOK_btn").prop("color", btn-primary); */
+                    $("#updateOK_btn").prop("disabled", false);
+                } else {
+                    $("#updateOK_btn").prop("disabled", true);
+                }
+            });
+
+            //#Pname 即時監聽處理
+            $("#Pname").bind("input propertychange", function () {
+                //console.log($("#UserName").val().length);
+                if ($(this).val().length < 2 || $(this).val().length > 10) {
+                    $("#err_Pname").html("產品名稱字數不符規則 2~10 字");
+                    $("#err_Pname").css("color", "red")
+                    chk_Pname = false
+                } else {
+                    $("#err_Pname").html("產品名稱字數符合規則");
+                    $("#err_Pname").css("color", "#253f58")
+                    chk_Pname = true
+                }
+                if (chk_Sort_ID && chk_Pname && chk_Pdimg && chk_Information && chk_Price && chk_DisPrice && chk_Points) {
+                    /*     $("#updateOK_btn").prop("color", btn-primary); */
+                    $("#updateOK_btn").prop("disabled", false);
+                } else {
+                    $("#updateOK_btn").prop("disabled", true);
+                }
+            });
+
+            //#Pdimg 即時監聽處理
+            $("#Pdimg").bind("input propertychange", function () {
+                //console.log($("#Pdimg").val().length);
+                if ($(this).val().length < 0 || $(this).val().length > 500) {
+                    $("#err_Pdimg").html("產品圖片路徑不符規則需為 0~500 數字");
+                    $("#err_Pdimg").css("color", "red")
+                    chk_Pdimg = false
+                } else {
+                    $("#err_Pdimg").html("產品圖片路徑符合規則");
+                    $("#err_Pdimg").css("color", "#253f58")
+                    chk_Pdimg = true
+                }
+                if (chk_Sort_ID && chk_Pname && chk_Pdimg && chk_Information && chk_Price && chk_DisPrice && chk_Points) {
+                    /*     $("#updateOK_btn").prop("color", btn-primary); */
+                    $("#updateOK_btn").prop("disabled", false);
+                } else {
+                    $("#updateOK_btn").prop("disabled", true);
+                }
+            });
+
+            //#Information 即時監聽處理
+            $("#Information").bind("input propertychange", function () {
+                //console.log($("#Height").val().length);
+                if ($(this).val().length < 1 || $(this).val().length > 300) {
+                    $("#err_Information").html("產品介紹不符規則需為 1~300 數字");
+                    $("#err_Information").css("color", "red")
+                    chk_Information = false
+                } else {
+                    $("#err_Information").html("產品介紹符合規則");
+                    $("#err_Information").css("color", "#253f58")
+                    chk_Information = true
+                }
+                if (chk_Sort_ID && chk_Pname && chk_Pdimg && chk_Information && chk_Price && chk_DisPrice && chk_Points) {
+                    /*     $("#updateOK_btn").prop("color", btn-primary); */
+                    $("#updateOK_btn").prop("disabled", false);
+                } else {
+                    $("#updateOK_btn").prop("disabled", true);
+                }
+            });
+
+            //#Price 即時監聽處理
+            $("#Price").bind("input propertychange", function () {
+                //console.log($("#Price").val());
+                if ($(this).val() < 1 || $(this).val() > 500) {
+                    $("#err_Price").html("產品單價不符規則需為 1~500 數字");
+                    $("#err_Price").css("color", "red")
+                    chk_Price = false
+                } else {
+                    $("#err_Price").html("產品單價金額符合規則");
+                    $("#err_Price").css("color", "#253f58")
+                    chk_Price = true
+                }
+                if (chk_Sort_ID && chk_Pname && chk_Pdimg && chk_Information && chk_Price && chk_DisPrice && chk_Points) {
+                    /*     $("#updateOK_btn").prop("color", btn-primary); */
+                    $("#updateOK_btn").prop("disabled", false);
+                } else {
+                    $("#updateOK_btn").prop("disabled", true);
+                }
+            });
+
+            //#DisPrice 即時監聽處理
+            $("#DisPrice").bind("input propertychange", function () {
+                //console.log($("#Price").val().length);
+                if ($(this).val() < 0 || $(this).val() > 500) {
+                    $("#err_DisPrice").html("產品特價不符規則需為 0~500 數字");
+                    $("#err_DisPrice").css("color", "red")
+                    chk_DisPrice = false
+                } else {
+                    $("#err_DisPrice").html("產品特價金額符合規則");
+                    $("#err_DisPrice").css("color", "#253f58")
+                    chk_DisPrice = true
+                }
+                if (chk_Sort_ID && chk_Pname && chk_Pdimg && chk_Information && chk_Price && chk_DisPrice && chk_Points) {
+                    /*     $("#updateOK_btn").prop("color", btn-primary); */
+                    $("#updateOK_btn").prop("disabled", false);
+                } else {
+                    $("#updateOK_btn").prop("disabled", true);
+                }
+            });
+
+            //#Points 即時監聽處理
+            $("#Points").bind("input propertychange", function () {
+                //console.log($("#Weight").val().length);
+                if ($(this).val() < 0 || $(this).val() > 100) {
+                    $("#err_Points").html("贈送點數不符規則需為 0~100 數字");
+                    $("#err_Points").css("color", "red")
+                    chk_Pnum = false
+                } else {
+                    $("#err_Points").html("贈送點數符合規則");
+                    $("#err_Points").css("color", "#253f58")
+                    chk_Points = true
+                }
+                if (chk_Sort_ID && chk_Pname && chk_Pdimg && chk_Information && chk_Price && chk_DisPrice && chk_Points) {
+                    /*     $("#updateOK_btn").prop("color", btn-primary); */
+                    $("#updateOK_btn").prop("disabled", false);
+                } else {
+                    $("#updateOK_btn").prop("disabled", true);
+                }
+            });
+        });
+
+        function showdata(data) {
+            console.log(data);
+            if (data.state) {
+                //將值帶入 輸入框                
+                $("#Sort_ID").val(data.data[0].Sort_ID)
+                $("#Pname").val(data.data[0].Pname)
+                /* $("#Pdimg").val(data.data[0].Pdimg) */
+                $("#Information").val(data.data[0].Information)
+                $("#Price").val(data.data[0].Price)
+                $("#DisPrice").val(data.data[0].DisPrice)
+                $("#Points").val(data.data[0].Points)
+
+                //監聽 取消按鈕
+                $("#cancel_btn").bind("click", function () {
+                    //console.log("cancel_click");
+                    location.href = "myShopProductCRUD.html";
+                });
+                //監聽 更新按鈕
+                $("#update_btn").bind("click", function () {
+                    console.log("update_click");
+                    //傳遞更新資料至 myShopProduct_U_api.php
+                    //{"ID":"9","Sort_ID":"12","Pname":"烏龍綠茶","Pdimg":"xxxx","Information":"good drink","Price":"50","DisPrice":"45","Points":"0"}
+                    var jsonData = {};
+                    jsonData["ID"] = id;
+                    jsonData["Sort_ID"] = $("#Sort_ID").val();
+                    jsonData["Pname"] = $("#Pname").val();
+                    jsonData["Pdimg"] = $("#Pdimg").val();
+                    jsonData["Information"] = $("#Information").val();
+                    jsonData["Price"] = $("#Price").val();
+                    jsonData["DisPrice"] = $("#DisPrice").val();
+                    jsonData["Points"] = $("#Points").val();
+
+                    console.log("update data=>" + JSON.stringify(jsonData));
+
+                    $.ajax({
+                        type: "POST",
+                        url: "../db/myShopProduct_U_api.php",
+                        data: JSON.stringify(jsonData),
+                        dataType: "json",
+                        success: showUpdatedata,
+                        error: function () {
+                            alert("error-myShopProduct_U_api.php");
+                        }
+                    });
+
+                });
+            } else {
+                alert(data.message);
+            }
+        }
+
+        function showUpdatedata(data) {
+            console.log(data);
+            if (data.state) {
+                alert(data.message);
+                location.href = "myShopProductCRUD.html";
+            } else {
+                alert(data.message);
+            }
+        }    
+    </script>
+</body>
+
+</html>

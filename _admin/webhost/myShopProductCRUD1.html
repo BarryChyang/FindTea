@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>飲料產品檔CRUD</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/mycss01.css">
+    <link rel="stylesheet" href="../css/all.min.css">
+    <style>
+        @media screen and (max-width:768px) {
+            .table-rwd thead {
+                display: none;
+            }
+
+            .table-rwd tbody tr {
+                display: block;
+                border: 5px solid var(--mycolor2);
+                margin-top: 10px;
+            }
+
+            .table-rwd tbody tr td {
+                display: block;
+                overflow: hidden;
+                /* 溢位處理 */
+            }
+
+            .table-rwd tbody tr td:before {
+                content: attr(data-th) " : ";
+                color: var(--mycolor3);
+                font-weight: bolder;
+                display: block;
+                float: left;
+                width: 18%;
+                text-align: right;
+            }
+
+            .table-rwd tbody tr td span.table-col {
+                display: block;
+                width: 82%;
+                float: left;
+                color: var(--mycolor4);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid bg-info" style="--bs-bg-opacity: .05;">
+        <!-- 所有內容要用 container 來包 格式才會一致正確 -->
+        <!--                  表格框線 /  表格互動反映 /表格條紋 單雙行/         /表格縮小-->
+        <table class="table table-bordered table-hover table-striped caption-top table-sm table-rwd mt-5">
+            <caption class="text-center">
+                <p style="color:green; font-size:30px;">飲料產品檔 資料表</p>
+                
+                <div class="col-4 d-inline" style="float:right">
+                    <a href="myShopproduct_C.html" class="btn btn-info me-2" style="float:left">新增</a>
+                </div>
+                <div class="col-8 d-inline">
+                    <label class="text-black no-padding-right" for="name">查詢條件</label>
+                    <input type="text" id="search_c1" name="search_c1" value="">
+                    <a href="myShopProductCRUD1.html" class="btn btn-primary fw-bold me-2" id="btn-search">查詢</a>
+                    <a href="myShopProductCRUD.html" class="btn btn-outline-warning fw-bold me-2" id="btn-clear">清除條件</a>
+                </div>
+
+
+            </caption>
+
+            <!-- 資料表 顯示 欄位表頭-->
+            <thead class="table-dark">
+                <tr class="table-danger text-center">
+                    <th>編號</th>
+                    <th>類別</th>
+                    <th>名稱</th>
+                    <th class="w-50">介紹</th>
+                    <th>圖片</th>
+                    <th>單價</th>
+                    <th>特價</th>
+                    <th>贈送點數</th>
+                    <th>建檔時間</th>
+                    <th>操作控制</th>
+                </tr>
+            </thead>
+            <!-- 資料表 顯示 每筆資料(內容)-->
+            <tbody id="showUserList">
+                <!-- <tr class="table-light">
+                    <td data-th="編號"><span class="table-col">1</span></td>
+                    <td data-th="類別"><span class="table-col">11</span></td>
+                    <td data-th="名稱"><span class="table-col">烏龍綠茶</span></td>
+                    <td data-th="介紹"><span class="table-col ">清除前進鐵路為了任何已經是因為，授權處罰大家方向烏日人們，學術放棄召開總算廠商成長隊員習慣越來越，情形提示怪物舉報型號多多我來獎勵都能的是首頁，簡歷採用事實最新金幣味道男性對他教育成就更新時間成功</span></td>
+                    <td data-th="圖片"><span class="table-col">../images/xxx.jpg</span></td>
+                    <td data-th="單價"><span class="table-col">50</span></td>
+                    <td data-th="特價"><span class="table-col">45</span></td>
+                    <td data-th="贈送點數"><span class="table-col">0</span></td>
+                    <td data-th="建檔時間"><span class="table-col">2023/01/05 12:00:00</span></td>
+                    <td>
+                    <a href="#" class="btn btn-outline-secondary me-2" data-bs-toggle="modal" data-bs-target="#fixModal" id="fixModal">修改Model</a>
+                    <a href="1220Updatepage.html?id=1" target="_blank" class="btn btn-outline-success me-2">換頁式修改</a>
+                    <a href="#" class="btn btn-outline-danger me-3" data-bs-toggle="modal" data-bs-target="#delModal" id="del_btn">刪除</a>                    
+                    </td>
+                </tr> -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- delModal -->
+    <div class="modal fade" id="delModal" tabindex="-1" aria-labelledby="delModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="delModal">飲料產品檔 資料刪除</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-danger">
+                    注意 !! 刪除資料, 最後確定!
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="m_delOKbtn">確認刪除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/bootstrap.bundle.min.js"></script>
+    <script src="../js/jquery-3.6.1.min.js"></script>
+
+    <script>
+        var ID;
+        $(function () {
+            /* console.log("1."+location.href);            
+            console.log("2."+location.href.split("="));
+            console.log("3."+location.href.split("=")[1]); */
+            if (typeof(location.href.split("=")[1])!="undefined"){
+                console.log("網址路徑正確");
+                id=decodeURI(location.href.split("=")[1]);
+                console.log("id="+id);
+                //處理帶入資料 .ajax 呼叫 1220_food_SelectByID_api.php ==> {"ID":"1"} 
+                var jsondata={};
+                jsondata["id"]=id;   
+                console.log(JSON.stringify(jsondata));             
+                $.ajax({
+                    type: "POST",
+                    url: "../db/myShopProduct_RS_api.php",
+                    data:JSON.stringify(jsondata),
+                    dataType: "json",                    
+                    success: showdata,
+                    error: function () {
+                        console.log(data.message);
+                        console.log("error ==> myShopProduct_RS_api.php");
+                    }
+                })
+            }else{
+                console.log("網址路徑錯誤");
+                location.herf="myShopProductCRUD.html";
+            }
+            /* 
+            //Model更新按鈕 監聽
+            $("#showUserList #fix_btn").bind("click",function(){                
+                console.log("fix_btn click");  
+                console.log($(this).data("id"));                
+                ID = $(this).data("id");              //在渲染時 data-ID 會被全改成小寫 id
+                Pname=$(this).data("pname");        //在渲染時 data-Pname 會被全改成小寫 pname
+                Price=$(this).data("price");        //在渲染時 data-Price 會被全改成小寫 price
+                Pnum=$(this).data("pnum");          //在渲染時 data-Pnum  會被全改成小寫 pnum
+                $("#Pname").val(Pname);
+                $("#Price").val(Price);
+                $("#Pnum").val(Pnum);                                
+            })
+            //Model 更新OK按鈕 監聽
+            $("#m_fixOKbtn").bind("click",function(){
+                console.log("m_fixOKbtn");
+                console.log(ID);                
+                var JSONdata={};                        //
+                JSONdata["ID"]=ID;
+                JSONdata["Pname"]=$("#Pname").val();
+                JSONdata["Price"]=$("#Price").val();
+                JSONdata["Pnum"]=$("#Pnum").val();
+                console.log(JSON.stringify(JSONdata))
+                $.ajax({
+                    type: "POST",
+                    url: "1215UpdateDBapi.php",
+                    data:JSON.stringify(JSONdata),
+                    dataType: "json",
+                    async: false,                //先有資料再有畫面 ,原先是先畫面後資料
+                    success: showUpdatedata,
+                    error: function () {
+                        console.log("error ==> " + "1215UpdateDBapi.php");
+                    }
+                })
+            })*/
+
+            //Model 刪除按鈕 監聽
+            $("#showUserList #del_btn").bind("click", function () {
+                //console.log("del_btn click");                
+                //console.log($(this).data());               
+                ID = $(this).data("id");              //在渲染時 data-ID 會被全改成小寫 id
+                //console.log("ID="+ ID);       
+                if (confirm("確認刪除此筆資料 編號ID => " + ID)) {
+                    console.log("刪除此筆資料OK");
+                } else {
+                    console.log("刪除此筆資料 失敗");
+                }
+            })
+            //Model 刪除OK按鈕 監聽
+            $("#m_delOKbtn").bind("click", function () {
+                console.log("m_delOKbtn");
+                console.log(ID);
+                var JSONdata = {};                        //
+                JSONdata["ID"] = ID;
+                console.log(JSON.stringify(JSONdata))
+                $.ajax({
+                    type: "POST",
+                    url: "../db/myShopProduct_D_api.php",
+                    data: JSON.stringify(JSONdata),
+                    dataType: "json",
+                    async: false,                //先有資料再有畫面 ,原先是先畫面後資料
+                    success: showDeldata,
+                    error: function () {
+                        console.log("error ==> " + "myShopProduct_D_api.php");
+                    }
+                })
+            })
+        })
+
+        function showdata(data) {
+            var strHTML;
+            //console.log(data);
+
+            if (data.state) {
+                //alert(data.message);
+                var dbdata = data.data;  //很重要 ,因為 API那端在DB資料外再包一層 arrar (state,message,data) ,所以這時 dbdata 才是真正 DB抓取後的json
+
+                /* table 呈現寫法 */
+                $("#showUserList").empty();
+                for (var vRow = 0; vRow < dbdata.length; vRow++) {
+                    /* table 呈現寫法  要注意 fixbtn delbtn 都要將data代入 */
+                    strHTML = '<tr class="table-light"><td data-th="編號"><span class="table-col">' + dbdata[vRow]["ID"] + '</span></td><td data-th="類別"><span class="table-col">' + dbdata[vRow]["Sort_ID"] + '</span></td><td data-th="名稱"><span class="table-col">' + dbdata[vRow]["Pname"] + '</span></td><td data-th="介紹"><span class="table-col">' + dbdata[vRow]["Information"] + '</span></td><td data-th="圖片"><span class="table-col">' + dbdata[vRow]["Pdimg"] + '</span></td><td data-th="單價"><span class="table-col">' + dbdata[vRow]["Price"] + '</span></td><td data-th="特價"><span class="table-col">' + dbdata[vRow]["DisPrice"] + '</span></td><td data-th="贈送點數"><span class="table-col">' + dbdata[vRow]["Points"] + '</span></td><td data-th="建檔時間"><span class="table-col">' + dbdata[vRow]["Created_at"] + '</span></td><td><a href="myShopProduct_U.html?id=' + dbdata[vRow]["ID"] + '" data-Sord_ID="' + dbdata[vRow]["Sort_ID"] + '" data-Pname="' + dbdata[vRow]["Pname"] + '" data-Pdimg="' + dbdata[vRow]["Pdimg"] + '" data-Information="' + dbdata[vRow]["Information"] + '" data-Price"' + dbdata[vRow]["Price"] + '" data-DisPrice="' + dbdata[vRow]["DisPrice"] + '" data-Points="' + dbdata[vRow]["Points"] + '" class="btn btn-outline-primary me-2"><i class="fa-solid fa-wrench"></i></a><a href="#" class="btn btn-outline-danger me-3" data-bs-toggle="modal" data-bs-target="#delModal" data-id="' + dbdata[vRow]["ID"] + '" id="del_btn"><i class="fa-regular fa-trash-can"></i></a></td></tr>'
+
+                    $("#showUserList").append(strHTML);
+                }
+                //$("#showUserList").append("<p style='color:red;font-size: 25px;'>總金額:" + vTotal + "</p>");
+            } else {
+                alert(data.message);
+            }
+        }
+        function showUpdatedata(data) {
+            console.log("showUpdatedata=>" + data);
+            if (data.state) {
+                alert(data.message);
+                location.href = "myShopProductCRUD.html";
+            } else {
+                alert(data.message);
+            }
+        }
+        function showDeldata(data) {
+            console.log("showDeldata=>" + data);
+            if (data.state) {
+                alert(data.message);
+                location.href = "myShopProductCRUD.html";
+            } else {
+                alert(data.message);
+            }
+        }
+    </script>
+
+</body>
+
+</html>

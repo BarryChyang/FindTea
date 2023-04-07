@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/myall.css">
+    <link href="../css/app.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <title>[就找茶]後台管理</title>
+    <link rel="canonical" href="https://demo-basic.adminkit.io/" />
+
+    <style>
+        /* 顏色說明 */
+        :root {
+            --line-border-fill: #f33252;
+            /*填滿狀態*/
+            --line-border-empty: #f4b9b9c6;
+            /*未填滿狀態*/
+            --btn-hover: #ec5b73;
+        }
+
+        body {
+            background-color: #fff5f6;
+            margin: 0;
+            padding: 0;
+            /* display: flex; */
+            /*讓內容在viewport的中間*/
+            justify-content: center;
+            align-items: center;
+            /* height: 100vh; */
+            /* overflow: hidden; */
+        }
+
+        /* 主容器 */
+        .container {
+            text-align: center;
+            /* font-size: 20px; */
+            /* font-weight: bold; */
+        }
+
+        /* 進度條容器 */
+        .progress-container {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            /*可以針對progress-containe內部物件的位子去做調整*/
+            margin-bottom: 30px;
+            max-width: 100%;
+            width: 350px;
+        }
+
+        /* 預設進度「線條」 */
+        .progress-container::before {
+            content: "";
+            background-color: var(--line-border-empty);
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            z-index: -1;
+            transform: translateY(-50%);
+            /*線條往上移動*/
+        }
+
+        /* 實際進度「線條」 */
+        div.progress {
+            background-color: var(--line-border-fill);
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 0%;
+            /*一開始不會有進度，所以設0%*/
+            height: 3px;
+            z-index: -1;
+            transform: translateY(-50%);
+            /*線條往上移動*/
+            transition: width 0.5s linear;
+        }
+
+        /* 步驟1、2、3、4 */
+        div.circle {
+            color: white;
+            background-color: #f34764;
+            border: 3px solid var(--line-border-empty);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            /* 讓數字置中對齊 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: border 0.5s linear;
+        }
+
+        /* 正在進行的步驟 */
+        div.circle.active {
+            border: 3px solid var(--line-border-fill);
+        }
+
+        .btn {
+            color: white;
+            background-color: var(--line-border-fill);
+            border: 0;
+            border-radius: 10px;
+            cursor: pointer;
+            padding: 8px 30px;
+            font-size: 14px;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            background-color: var(--btn-hover);
+        }
+
+        .btn:focus {
+            outline: 0;
+            /*或none*/
+        }
+
+        .btn:disabled {
+            cursor: not-allow;
+            background-color: var(--line-border-empty);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <!-- ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓  左側 Menu  起始 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓-->
+        <nav id="sidebar" class="sidebar js-sidebar">
+            <div class="sidebar-content js-simplebar">
+                <a class="sidebar-brand" href="../index.html">
+                    <span class="align-middle fs-2">
+                        <i class="fa-solid fa-leaf text-success"></i>&nbsp&nbsp&nbsp&nbsp就找茶&nbsp&nbsp
+                        <i class="fa-solid fa-leaf text-success"></i>
+                    </span>
+                </a>
+
+                <ul class="sidebar-nav">
+
+                    <div id="Rootmember" style="display: none;">
+                        <li class="sidebar-header">
+                            管理者資料管理
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="../_admin/index.html">
+                                <i class="align-middle" data-feather="sliders"></i> <span
+                                    class="align-middle">系統資訊儀表板</span>
+                            </a>
+                        </li>
+                    </div>
+
+                    <li class="sidebar-header">
+                        會員資料管理
+                    </li>
+                    <li class="sidebar-item">
+                        <a class="sidebar-link" href="../_admin/member.html">
+                            <i class="align-middle" data-feather="user"></i> <span class="align-middle">會員基本資料維護</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a class="sidebar-link" href="../_admin/memoder.html">
+                            <i class="align-middle" data-feather="user-plus"></i> <span
+                                class="align-middle">會員訂單查詢</span>
+                        </a>
+                    </li>
+                    <!-- 					<li class="sidebar-item">
+                            <a class="sidebar-link" href="pages-sign-in.html">
+                                <i class="align-middle" data-feather="log-in"></i> <span class="align-middle">登入</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="pages-blank.html">
+                                <i class="align-middle" data-feather="book"></i> <span class="align-middle">空白</span>
+                            </a>
+                        </li> -->
+
+                        <div id="Rootmember2" style="display: none;" >
+                            <li class="sidebar-header">
+                                茶飲品資料管理
+                            </li>
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" href="ui-myShopProductCRUD.html">
+                                    <i class="fa-solid fa-mug-hot"></i> <span
+                                        class="align-middle">茶飲產品資料維護</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" href="ui-myShopSpecialCRUD.html">
+                                    <i class="fa-solid fa-mug-saucer"></i></i> <span
+                                        class="align-middle">茶飲產品分類檔維護</span>
+                                </a>
+                            </li>						
+                        </div>
+                </ul>
+
+                <div class="sidebar-cta">
+                    <div class="sidebar-cta-content">
+                        <strong class="d-inline-block mb-2">連鎖茶店系統</strong>
+                        <div class="mb-3 text-sm">
+                            你是否正在找 茶飲品訂購 管理系統 , [就找茶] 幫你一切搞定
+                        </div>
+                        <div class="d-grid">
+                            <a href="index.html" class="btn btn-primary">測試版下載</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <!-- ↑↑↑↑↑↑↑↑↑↑↑↑↑↑  左側 Menu 結束 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑-->
+
+        <div class="main">
+            <nav class="navbar navbar-expand navbar-light navbar-bg">
+                <a class="sidebar-toggle js-sidebar-toggle">
+                    <i class="hamburger align-self-center"></i>
+                </a>
+
+                <!-- ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓  網站主頁右上角 1.提示 2.對話 3.下拉選單  起始 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓-->
+                <div class="navbar-collapse collapse">
+                    <ul class="navbar-nav navbar-align">
+                        <li class="nav-item dropdown">
+                            <a class="nav-icon dropdown-toggle" href="#" id="alertsDropdown" data-bs-toggle="dropdown">
+                                <div class="position-relative">
+                                    <i class="align-middle" data-feather="bell"></i>
+                                    <span class="indicator">4</span>
+                                </div>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0"
+                                aria-labelledby="alertsDropdown">
+                                <div class="dropdown-menu-header">
+                                    4 New Notifications
+                                </div>
+                                <div class="list-group">
+                                    <a href="#" class="list-group-item">
+                                        <div class="row g-0 align-items-center">
+                                            <div class="col-2">
+                                                <i class="text-danger" data-feather="alert-circle"></i>
+                                            </div>
+                                            <div class="col-10">
+                                                <div class="text-dark">Update completed</div>
+                                                <div class="text-muted small mt-1">Restart server 12 to complete the
+                                                    update.</div>
+                                                <div class="text-muted small mt-1">30m ago</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <a href="#" class="list-group-item">
+                                        <div class="row g-0 align-items-center">
+                                            <div class="col-2">
+                                                <i class="text-warning" data-feather="bell"></i>
+                                            </div>
+                                            <div class="col-10">
+                                                <div class="text-dark">Lorem ipsum</div>
+                                                <div class="text-muted small mt-1">Aliquam ex eros, imperdiet
+                                                    vulputate
+                                                    hendrerit et.</div>
+                                                <div class="text-muted small mt-1">2h ago</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <a href="#" class="list-group-item">
+                                        <div class="row g-0 align-items-center">
+                                            <div class="col-2">
+                                                <i class="text-primary" data-feather="home"></i>
+                                            </div>
+                                            <div class="col-10">
+                                                <div class="text-dark">Login from 192.186.1.8</div>
+                                                <div class="text-muted small mt-1">5h ago</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <a href="#" class="list-group-item">
+                                        <div class="row g-0 align-items-center">
+                                            <div class="col-2">
+                                                <i class="text-success" data-feather="user-plus"></i>
+                                            </div>
+                                            <div class="col-10">
+                                                <div class="text-dark">New connection</div>
+                                                <div class="text-muted small mt-1">Christina accepted your request.
+                                                </div>
+                                                <div class="text-muted small mt-1">14h ago</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="dropdown-menu-footer">
+                                    <a href="#" class="text-muted">Show all notifications</a>
+                                </div>
+                            </div>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-icon dropdown-toggle" href="#" id="messagesDropdown"
+                                data-bs-toggle="dropdown">
+                                <div class="position-relative">
+                                    <i class="align-middle" data-feather="message-square"></i>
+                                </div>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0"
+                                aria-labelledby="messagesDropdown">
+                                <div class="dropdown-menu-header">
+                                    <div class="position-relative">
+                                        4 New Messages
+                                    </div>
+                                </div>
+                                <div class="list-group">
+                                    <a href="#" class="list-group-item">
+                                        <div class="row g-0 align-items-center">
+                                            <div class="col-2">
+                                                <img src="../img/avatars/avatar-5.jpg"
+                                                    class="avatar img-fluid rounded-circle" alt="Vanessa Tucker">
+                                            </div>
+                                            <div class="col-10 ps-2">
+                                                <div class="text-dark">Vanessa Tucker</div>
+                                                <div class="text-muted small mt-1">Nam pretium turpis et arcu. Duis
+                                                    arcu
+                                                    tortor.</div>
+                                                <div class="text-muted small mt-1">15m ago</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <a href="#" class="list-group-item">
+                                        <div class="row g-0 align-items-center">
+                                            <div class="col-2">
+                                                <img src="../img/avatars/avatar-2.jpg"
+                                                    class="avatar img-fluid rounded-circle" alt="William Harris">
+                                            </div>
+                                            <div class="col-10 ps-2">
+                                                <div class="text-dark"></div>
+                                                <div class="text-muted small mt-1">Curabitur ligula sapien euismod
+                                                    vitae.</div>
+                                                <div class="text-muted small mt-1">2h ago</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <a href="#" class="list-group-item">
+                                        <div class="row g-0 align-items-center">
+                                            <div class="col-2">
+                                                <img src="../img/avatars/avatar-4.jpg"
+                                                    class="avatar img-fluid rounded-circle" alt="Christina Mason">
+                                            </div>
+                                            <div class="col-10 ps-2">
+                                                <div class="text-dark">Christina Mason</div>
+                                                <div class="text-muted small mt-1">Pellentesque auctor neque nec
+                                                    urna.
+                                                </div>
+                                                <div class="text-muted small mt-1">4h ago</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <a href="#" class="list-group-item">
+                                        <div class="row g-0 align-items-center">
+                                            <div class="col-2">
+                                                <img src="../img/avatars/avatar-3.jpg"
+                                                    class="avatar img-fluid rounded-circle" alt="Sharon Lessman">
+                                            </div>
+                                            <div class="col-10 ps-2">
+                                                <div class="text-dark">Sharon Lessman</div>
+                                                <div class="text-muted small mt-1">Aenean tellus metus, bibendum
+                                                    sed,
+                                                    posuere ac, mattis non.</div>
+                                                <div class="text-muted small mt-1">5h ago</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="dropdown-menu-footer">
+                                    <a href="#" class="text-muted">Show all messages</a>
+                                </div>
+                            </div>
+                        </li>
+                        <!-- ↑↑↑↑↑↑↑↑↑↑↑↑↑↑  網站主頁右上角 4 下拉選單 結束 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑-->
+
+                        <!-- ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓  網站主頁右上角 3 下拉選單 起始 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓-->
+                        <li class="nav-item dropdown">
+                            <a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#"
+                                data-bs-toggle="dropdown">
+                                <i class="align-middle" data-feather="settings"></i>
+                            </a>
+
+                            <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#"
+                                data-bs-toggle="dropdown">
+                                <img src="../img/avatars/avatar.jpg" class="avatar img-fluid rounded me-1"
+                                    alt="Charles Hall" /> <span class="text-dark" id="login_member">Charles
+                                    Hall</span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <a class="dropdown-item" href="pages-profile.html"><i class="align-middle me-1"
+                                        data-feather="user"></i> Profile</a>
+                                <a class="dropdown-item" href="#"><i class="align-middle me-1"
+                                        data-feather="pie-chart"></i> Analytics</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="index.html"><i class="align-middle me-1"
+                                        data-feather="settings"></i> Settings & Privacy</a>
+                                <a class="dropdown-item" href="#"><i class="align-middle me-1"
+                                        data-feather="help-circle"></i> Help Center</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#">Log out</a>
+                            </div>
+                        </li>
+                        <!-- ↑↑↑↑↑↑↑↑↑↑↑↑↑↑  網站主頁右上角 3 下拉選單 結束 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑-->
+                    </ul>
+                </div>
+                <!-- ↑↑↑↑↑↑↑↑↑↑↑↑↑↑  網站主頁右上角 1.提示 2.對話 3.下拉選單 結束 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑-->
+            </nav>
+
+
+
+
+            <!-- ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓  網站中間主頁 main 起始 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓-->
+            <main class="content ">
+                <div class="container-fluid p-0">
+                    <h1 class="mb-3 text-primary text-start"><strong>會員資料</strong></h1>
+                    <!-- ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓  網站中間主頁 main 第一排 分析資訊小方格+業績折線圖 起始 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓-->
+                    <div class="container ">
+                        <div class="row ">
+                            <div class="col-12 d-flex justify-content-center ">
+                                <div class="progress-container ">
+                                    <!-- 進度「線條」 -->
+                                    <div id="progress" class="progress "></div>
+                                    <div class="circle active">1</div>
+                                    <div class="circle">2</div>
+                                    <div class="circle">3</div>
+                                    <!-- <div class="circle">4</div> -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="" id="page1">
+                            <div class="m-2">確認明細</div>
+                            <div class="d-flex justify-content-center ">
+                                <!-- 地址 -->
+                                <div class="box03 w-50 col-12">
+                                    <div class="row">
+                                        <div class="col d-flex flex-column text-start">
+                                            <div class="form-check float-start">
+                                                <input type="radio" id="radio_adress01" name="radio_adress"
+                                                    class="form-check-label" value="自取" checked>
+                                                <label for="radio_adress01" id="Take_my"
+                                                    class="form-check-label">自取</label>
+                                            </div>
+                                            <!-- 自取 id:="spu" -->
+                                            <div class="" id="spu" style="display: none;">
+                                                <input type="text" class="form-control mb-3  d-flex align-self-center "
+                                                    id="adress01" disabled placeholder="台中市西屯區工業區一路100號"
+                                                    value="台中市西屯區工業區一路100號">
+                                            </div>
+
+                                            <div class="form-check float-start">
+                                                <input type="radio" id="radio_adress02" name="radio_adress"
+                                                    class="form-check-label" value="外送">
+                                                <label for="radio_adress02" class="form-check-label">外送</label>
+                                            </div>
+                                            <!-- 外送 id:="del" -->
+                                            <div class="" id="del" style="display:none;">
+                                                <input type="text" id="adress"
+                                                    class="form-control mb-3  d-flex align-self-center "
+                                                    placeholder="請輸入地址">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-center mt-4">
+                                <!-- 購買內容 -->
+                                <div class="box03 w-50 col-12" id="">
+                                    <div class="row">
+                                        <div class="col d-flex flex-column text-start">
+                                            <div class="">購物內容</div>
+                                            <div class=" d-flex flex-row justify-content-between mt-2">
+                                                <div class="" id="buyname">購買人資料: </div>
+                                                <div class="" id="totalmoney">$總金額/總數量</div>
+                                            </div>
+                                            <div class="" id="alldrink">
+                                                <div class="box03 mt-3">
+                                                    <div class="">珍珠伯爵紅茶拿鐵</div>
+                                                    <div class="small">L/微冰/微糖/$40/1杯</div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div class="d-flex justify-content-center mt-4">
+                                    紅利折扣
+                                    <div class="box03 w-50 col-12">
+                                        <div class="row">
+                                            <div class="col d-flex flex-column text-start">
+                                                <div class="">會員紅利折抵</div>
+                                                <div class="mt-2 ">
+                                                    <div class="d-flex flex-row justify-content-between">
+                                                        <div class="">
+                                                            <input type="radio" id="radio_food02" name="radio_food" class="form-check-label"
+                                                                value="紅利點數">
+                                                            <label for="radio_food02" class="form-check-label">紅利點數</label>
+                                                        </div>
+                    
+                                                        <div class="">紅利餘額:XX</div>
+                                                    </div>
+                    
+                                                    <input type="radio" disabled id="radio_food02" name="radio_food"
+                                                        class="form-check-label" value="折扣券">
+                                                    <label for="radio_food02" class="form-check-label">折扣券</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> -->
+                            <div class="d-flex justify-content-center mt-4">
+                                <!-- 訂單總量 -->
+                                <div class="box03 w-50 col-12">
+                                    <div class="row">
+                                        <div class="col d-flex flex-column text-start">
+                                            <div class="">訂單總量</div>
+                                            <div class=" d-flex flex-row justify-content-between mt-2">
+                                                <div class="" id="butdrink"></div>
+                                                <div class="" id="buymoney"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="" id="page2" style="display: none;">
+                            <div class="m-2">選擇付款</div>
+
+                            <div class="d-flex justify-content-center mt-4">
+                                <!-- 取餐人資料 -->
+                                <div class="box03 w-50 col-12">
+                                    <div class="row text-start">
+                                        <div class="">取餐人資料</div>
+                                        <div class="">姓名</div>
+                                        <div class="">
+                                            <input type="text" class="form-control mb-3  d-flex align-self-center "
+                                                id="Take_name" placeholder="取餐人姓名">
+                                        </div>
+                                        <div class="">電話</div>
+                                        <div class="">
+                                            <input type="text" class="form-control mb-3  d-flex align-self-center "
+                                                id="Take_phone" placeholder="取餐人電話">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-center mt-4">
+                                <!-- 付款方式 -->
+                                <div class="box03 w-50 col-12">
+                                    <div class="row text-start">
+                                        <div class="">付款方式</div>
+                                        <div class="form-check float-start">
+                                            <input type="radio" id="radio_food02" name="radio_food"
+                                                class="form-check-label" value="現金">
+                                            <label for="radio_food02" class="form-check-label">現金</label>
+                                        </div>
+                                        <div class="form-check float-start">
+                                            <input type="radio" id="radio_food02" name="radio_food"
+                                                class="form-check-label" value="刷卡">
+                                            <label for="radio_food02" class="form-check-label">刷卡</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="" id="page3" style="display: none;">
+                            <div class="m-2">確認結帳</div>
+                            <div class="d-flex justify-content-center mt-4">
+                                <!-- 確認結帳資料 -->
+                                <div class="box03 w-50 col-12">
+                                    <div class="row text-start">
+                                        <table class="" RULES=COLS style=" border:1px #cccccc solid;" cellpadding="10">
+                                            <thead>取餐人資料</thead>
+
+                                            <tbody id="show_menu">
+
+                                                <tr>
+                                                    <td>取餐人</td>
+                                                    <td>XXX</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>連絡電話</td>
+                                                    <td>0900-123-456</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>取餐方式</td>
+                                                    <td>自取</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>付款方式</td>
+                                                    <td>現金</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>應付金額</td>
+                                                    <td>$187</td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 上一步 -->
+                        <button id="prev" type="button" class="btn mt-3" disabled>上一步</button>
+                        <!-- 下一步 -->
+                        <button id="next" type="button" class="btn mt-3">下一步</button>
+                        <button id="get" type="button" class="btn mt-3" style="display: none;">送出</button>
+
+                    </div>
+
+                    <!-- ↑↑↑↑↑↑↑↑↑↑↑↑↑↑  網站中間主頁 main 第三排 結束 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ -->
+                </div>
+            </main>
+            <!-- ↑↑↑↑↑↑↑↑↑↑↑↑↑↑  網站中間主頁 main 結束 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑-->
+
+
+
+
+            <!-- ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓  網站主頁 footer 起始  ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓-->
+            <div class="container-fluid">
+                <div class="row border border-light">
+                    <div class="col-6">
+                        <div class="text-start"><strong> Copyright © 2023 All rights reserved.</strong></div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-end">Version 1.2</div>
+                    </div>
+                </div>
+                <div class="row"><br></div>
+            </div>
+            <!-- ↑↑↑↑↑↑↑↑↑↑↑↑↑↑  網站主頁 footer 結束 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑-->
+        </div> <!-- main 結束-->
+    </div> <!-- wrapper 結束-->
+
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/jquery-3.6.1.min.js"></script>
+    <script src="js/check_member_state.js"></script>
+
+    <script>
+        let progress = document.getElementById("progress");
+        let prev = document.getElementById("prev");
+        let next = document.getElementById("next");
+        let circles = document.querySelectorAll(".circle");
+
+        let currentStep = 1; //目前步驟
+        var test;
+        var test02 = '自取';
+        var id;
+        var fd = '現金';
+        var totalprice = 0;
+        var Orderno;
+        var userid;
+
+        // var check01 = [];
+        $(function () {
+            //利用cookie判斷登入狀態
+            if (getCookie("UID01") != "" && getCookie("UID02") != "" && getCookie("UID03") != "") {
+                // console.log("UID存在");
+                //傳遞至後端驗證UID
+                var jsonData = {};
+                jsonData["uid01"] = getCookie("UID01");
+                jsonData["uid02"] = getCookie("UID02");
+                jsonData["uid03"] = getCookie("UID03");
+                // console.log(JSON.stringify(jsonData));
+                $.ajax({
+                    type: "POST",
+                    url: "../API/Member_UID_api.php",
+                    data: JSON.stringify(jsonData),
+                    dataType: "json",
+                    success: uid_check_showdata,
+                    error: function () {
+                        alert("error_Member_UID_api.php");
+                    }
+                })
+
+            }
+            //登出即時監聽
+            $("#logout_btn").bind("click", function () {
+                console.log("test");
+
+                setCookie("UID01", "", 7);
+                setCookie("UID02", "", 7);
+                setCookie("UID03", "", 7);
+
+                location.href = "progess.html";
+
+            })
+            //自取RADIO
+            $("#radio_adress01").click(function () {
+                // console.log($(radio_adress01).val());
+                $("#spu").show();
+                $("#del").hide();
+                test = '台中市西屯區工業區一路100號';
+                test02 = $(radio_adress01).val();
+            })
+            //外送RADIO
+            $("#radio_adress02").click(function () {
+                // console.log($(radio_adress02).val());
+                $("#del").show();
+                $("#spu").hide();
+                test = $("#adress").val();
+                test02 = $(radio_adress02).val();
+
+
+            })
+            //adress radio監聽
+            $("#adress").bind("input propertychange", function () {
+                // console.log($("#adress").val());
+                test = $("#adress").val();
+            })
+
+            if (test == '台中市西屯區工業區一路100號') {
+                test = '台中市西屯區工業區一路100號';
+            } else if (test == $("#adress").val()) {
+                test = $("#adress").val();
+            }
+
+            $.ajax({
+                type: "GET",
+                url: "../API/Member_Rapi.php",
+                dataType: "json",
+                async: false,
+                success: member_showdata,
+                error: function () {
+                    alert("error_Member_Rapi.php");
+                }
+            })
+
+            console.log(location.href.split("=")[1]);
+            userid = location.href.split("=")[1];
+            var jsondata = {};
+            jsondata["userID"] = userid;
+            console.log(JSON.stringify(jsondata));
+
+            $.ajax({
+                type: "POST",
+                url: "../API/OrderOrderSub_R_BYID_api.php",
+                data: JSON.stringify(jsondata),
+                dataType: "json",
+                async: false,
+                success: OrderSub_showdata,
+                error: function () {
+                    alert("error_myShopOrderSub_R_byOrderno_api.php");
+                }
+            })
+        })
+        function OrderSub_showdata(data) {
+            console.log(data);
+            $("#alldrink").empty();
+            // console.log(data.data[0].Orderno);
+            Orderno = data.data[0].Orderno;
+            var totalnum = 0;
+            if (data.state) {
+                for (var i = 0; i < data.data.length; i++) {
+                    var strHTML = '<div class="box03 mt-3"><div class="">' + data.data[i].Pname + '</div><div class="small">' + data.data[i].Capacity + '/' + data.data[i].Temp + '/' + data.data[i].Sweet + '/$' + data.data[i].Price + '/' + data.data[i].Pnum + '杯</div></div>'
+                    $("#alldrink").append(strHTML);
+                    totalprice = totalprice + data.data[i].Price * data.data[i].Pnum;
+
+                    totalnum = totalnum + data.data[i].Pnum * 1;
+                }
+                $("#totalmoney").text('$' + totalprice + '/' + totalnum + '杯');
+                $("#butdrink").append('總共:' + totalnum + '杯');
+                $("#buymoney").append('$' + totalprice);
+            } else {
+                alert(data.message);
+            }
+        }
+        //會員member_showdata
+        function member_showdata(data) {
+            // console.log(data.data[0].Username);
+            $("#buyname").append(data.data[0].Username);
+        }
+        //確認UID
+        function uid_check_showdata(data) {
+            // console.log(data);
+            if (data.state) {
+
+                if (data.data[0].Userstate == "y") {
+
+                    $("#login_member").text(data.data[0].Username + "會員你好　　");
+                    $("#showd").empty();
+                    $("#username").val(data.data[0].Username);
+                    $("#password").val("********");
+
+                } else {
+                    alert("帳號停權中...請連絡負責人處理");
+                }
+                if (data.data[0].Userstate == "y" && data.data[0].Usertype == 100) {
+                    $("#Rootmember").show();
+                    $("#Rootmember2").show();
+                    $("#Root1").show();
+                    $("#Root2").show();
+                    $("#Root3").show();
+                    $("#Root0").hide();
+
+                }
+            }
+
+        }
+
+        // 下一步
+        next.addEventListener("click", () => {
+            currentStep++;
+            // console.log(currentStep);
+            if (currentStep > circles.length) {
+                currentStep = circles.length;
+            }
+            // console.log(currentStep);
+            update();
+        });
+
+        // 上一步
+        prev.addEventListener("click", () => {
+            currentStep--;
+            // console.log(currentStep);
+            if (currentStep < 1) {
+                currentStep = 1;
+            }
+            // console.log(currentStep);
+            update();
+        });
+
+        // 更新DOM
+        function update() {
+            // 圓圈
+            circles.forEach((circleItem, index) => {
+                if (index < currentStep) {
+                    circleItem.classList.add("active");
+                } else {
+                    circleItem.classList.remove("active");
+                }
+            });
+
+            // 當前進度的線條
+            let actives = document.querySelectorAll(".active");
+            // console.log((actives.length / circles.length) * 100);
+            // progress.style.width = (actives.length / circles.length) * 100 + "%";
+            progress.style.width =
+                ((actives.length - 2) / (circles.length - 1)) * 100 + "%";
+            if (currentStep === 1) {
+                $("#page1").show();
+                $("#page2").hide();
+                $("#page3").hide();
+                $("#next").show();
+                $("#get").hide();
+                prev.disabled = true;
+            } else if (currentStep === 3) {
+                $("#page1").hide();
+                $("#page2").hide();
+                $("#page3").show();
+                $("#next").hide();
+                $("#get").show();
+                $.each($("input[name='radio_food']:checked"), function () {
+                    fd = $(this).val();
+                })
+                $("#show_menu").empty();
+                var strHTML = `    <tr>
+                                        <td>取餐人</td>
+                                        <td>`+ $("#Take_name").val() + `</td>
+                                    </tr>
+                                    <tr>
+                                        <td>連絡電話</td>
+                                        <td>`+ $("#Take_phone").val() + `</td>
+                                    </tr>
+                                    <tr>
+                                        <td>取餐方式</td>
+                                        <td>`+ test02 + `</td>
+                                    </tr>
+                                    <tr>
+                                        <td>付款方式</td>
+                                        <td>`+ fd + `</td>
+                                    </tr>
+                                    <tr>
+                                        <td>應付金額</td>
+                                        <td>`+ totalprice + `</td>
+                                    </tr>`;
+                $("#show_menu").append(strHTML);
+                $("#get").bind("click", function () {
+
+
+                    if ($("#Take_name").val() != '' && $("#Take_phone").val() != '') {
+                        var jsondata = {};
+                        jsondata["Adress"] = test;
+                        // console.log(test02);
+                        jsondata["Take_mael"] = test02;
+                        jsondata["Name"] = $("#Take_name").val();
+                        jsondata["Phone"] = $("#Take_phone").val();
+                        jsondata["Pay"] = fd;
+                        jsondata["Money"] = totalprice;
+                        jsondata["Orderno"] = Orderno;
+                        jsondata["ID"] = userid;
+                        console.log(JSON.stringify(jsondata));
+
+                        $.ajax({
+                            type: "POST",
+                            url: "../API/Member_buyC_api.php",
+                            data: JSON.stringify(jsondata),
+                            dataType: "json",
+                            async: false,
+                            success: showdata_c,
+                            error: function () {
+                                alert("error_Member_buyC_api.php");
+                            }
+                        });
+                    } else {
+                        alert('請輸入姓名與電話');
+                    }
+                })
+                // next.disabled = true;
+
+            } else {
+                $("#page1").hide();
+                $("#page2").show();
+                $("#page3").hide();
+                $("#get").hide();
+                $("#next").show();
+                $("#next").text("下一步");
+
+
+                prev.disabled = false;
+                next.disabled = false;
+            }
+        }
+
+        function showdata_c(data) {
+            if (data.state) {
+                alert(data.message);
+                location.href = "../_admin/memoder.html";
+            } else {
+                alert(data.message);
+            }
+        }
+
+        function setCookie(cname, cvalue, exdays) {
+            const d = new Date();
+            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+            let expires = "expires=" + d.toUTCString();
+            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+        }
+
+        function getCookie(cname) {
+            let name = cname + "=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let ca = decodedCookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        function checkCookie() {
+            let user = getCookie("username");
+            if (user != "") {
+                alert("Welcome again " + user);
+            } else {
+                user = prompt("Please enter your name:", "");
+                if (user != "" && user != null) {
+                    setCookie("username", user, 30);
+                }
+            }
+        }
+    </script>
+
+</body>
+
+</html>
